@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+    database:
+        container_name: murb-postgresql
+        image: postgres
+        restart: always
+        volumes:
+            - ../docs:/docker-entrypoint-initdb.d
+        env_file:
+            - .env
+        ports:
+            - "5442:5432"
+    pgadmin:
+        container_name: murb-pgadmin4
+        image: dpage/pgadmin4
+        restart: always
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@admin.com
+            PGADMIN_DEFAULT_PASSWORD: root
+        ports:
+            - "5052:80"

@@ -1,0 +1,73 @@
+# Testing and modules
+
+node_modules/
+coverage/
+/.pnp
+.pnp.js
+
+# Build and compiled outputs
+dist/
+.next/
+out/
+build/
+
+# OS
+.DS_Store
+*.pem
+.swc/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# IDE configs
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.obsidian
+.idea
+.DS_Store
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# vercel
+.vercel/
+
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# temp directory
+.temp
+.tmp
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json

@@ -1,0 +1,34 @@
+{
+	"name": "murb",
+	"version": "1.0.0",
+	"main": "index.js",
+	"directories": {
+		"doc": "docs"
+	},
+	"scripts": {
+		"prepare": "husky",
+		"install": "cd server && pnpm install && cd ../web && yarn && cd ../server",
+		"start": "cd web && yarn start && cd ../server && pnpm start:prod",
+		"dev": "concurrently \"cd web && yarn dev\" \"cd server && pnpm run start:dev\"",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"lint": "cd web && yarn lint && cd ../server && pnpm lint",
+		"test": "cd web && yarn test && cd ../server && pnpm test",
+		"build": "cd web && yarn build && cd ../server && pnpm build",
+		"clean": "cd web && rm -rf .next/ && rm -rf .swc/ && cd ../server && rm -rf dist/",
+		"uninstall": "rm -rf node_modules && cd web && yarn uninstall && cd ../server && rm -rf node_modules",
+		"frontend": "cd web && yarn dev",
+		"backend": "cd server && pnpm start:dev"
+	},
+	"keywords": [],
+	"author": "OpenGig",
+	"license": "ISC",
+	"description": "Sports, music, art, culture and tours - all in one place. Host with us with ease and focus on what matters.",
+	"devDependencies": {
+		"@commitlint/cli": "^18.6.1",
+		"@commitlint/config-conventional": "^18.6.2",
+		"concurrently": "^8.2.2",
+		"husky": "^9.0.11",
+		"prettier": "^3.3.2"
+	}
+}
