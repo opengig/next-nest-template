@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://root:root@localhost:5442/murb-backend"
+  url      = "postgresql://root:root@localhost:5442/api"
 }
 
 model otps {
