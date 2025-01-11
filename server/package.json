@@ -29,6 +29,7 @@
 		"@aws-sdk/client-s3": "^3.606.0",
 		"@aws-sdk/client-sns": "^3.600.0",
 		"@aws-sdk/s3-request-presigner": "^3.606.0",
+		"@deepgram/sdk": "^3.9.0",
 		"@nestjs/common": "^10.0.0",
 		"@nestjs/config": "^3.2.2",
 		"@nestjs/core": "^10.0.0",
@@ -41,14 +42,18 @@
 		"class-transformer": "^0.5.1",
 		"class-validator": "^0.14.1",
 		"dotenv": "^16.4.5",
+		"groq-sdk": "^0.12.0",
 		"multer": "1.4.5-lts.1",
 		"nestjs-pino": "^4.1.0",
+		"openai": "^4.78.1",
 		"passport": "^0.7.0",
 		"passport-google-oauth20": "^2.0.0",
 		"passport-jwt": "^4.0.1",
 		"pino-http": "^10.1.0",
 		"reflect-metadata": "^0.2.0",
-		"rxjs": "^7.8.1"
+		"rxjs": "^7.8.1",
+		"twilio": "^5.4.1",
+		"ws": "^8.18.0"
 	},
 	"devDependencies": {
 		"@nestjs/cli": "^10.0.0",
