@@ -1,7 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { createClient, LiveTranscriptionEvents } from "@deepgram/sdk";
-import { WebSocket } from "ws";
+import { createClient } from "@deepgram/sdk";
 
 @Injectable()
 export class DeepgramService {
