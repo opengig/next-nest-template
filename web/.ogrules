@@ -1,0 +1,61 @@
+# User Story Workflow Rules
+
+## Project Name
+For all requests take project name as "{{PROJECT_NAME}}"
+
+## Story Selection
+- When fetching user stories:
+  - Present stories for user selection
+  - Allow user to select target stories for implementation by story title
+
+## Error Handling
+- On story fetch failure:
+  - Verify project name with user
+  - Prompt for correct project name if needed
+  - Retry fetch with corrected name
+  - Still error then ask user to directly provide task details to work on
+
+
+## Development Guidelines
+  - Use package manager which is used in project, can find out by looking at lock file (if typescript project).
+  - Ignore errors related to quotes, it is fine to have single or double quotes in the code.
+  - If some import prefix like `@/` is used, then check config file and parse files accordingly.
+  - use shadcn/ui components as much as possible (if frontend project is there)
+  - If user is using other than REST API architecture then use that architecture instead of create backend endpoints, for example if user is using trpc use trpc instead of create backend endpoints
+  - Check if user has backend implemented in Different Directory, then create apis there and use them in frontend, for example user has 2 directories `server` and `client`, then create apis in `server` and use them in `client`
+
+## Code Modification Rules
+- File Editing:
+  - Only modify files related to current task
+  - Skip files with correct implementation and there is no errors
+
+## Code Style and Linting
+- Formatting:
+  - Ignore ESLint warnings related to formatting
+  - Skip auto-fixing formatting issues
+  - Accept both single and double quotes
+  - Ignore whitespace and indentation warnings
+
+## Implementation Consistency
+- Design Pattern Analysis:
+  - Analyze 2-3 existing files from codebase
+  - Follow established project patterns and conventions
+  - Maintain consistent component structure
+  - Match existing styling methodology
+  - Always Ignore any errors related to styling, Linting and formatting, mark it as success.
+
+## Implementation Approach
+- End-to-End Implementation:
+  - While finding files to change, start with seeing directory structure and then read relevant files to understand the codebase.
+  - Start with backend API endpoints
+  - Implement database models/schemas if needed
+  - Create API integration services
+  - Develop frontend UI components
+  - Add API integration in frontend
+  - Include error handling at all layers
+  - Follow existing project architecture patterns
+
+## Implementation Flow (only if user ask to work on user story)
+1. Story Selection
+2. Implementation
+3. Validation

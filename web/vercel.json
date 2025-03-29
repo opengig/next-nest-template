@@ -1,0 +1,7 @@
+{
+  "build": {
+    "env": {
+      "DATABASE_URL": "postgresql://opengig:Database2024!@opengigmvp.postgres.database.azure.com:5432/hi2aa1a043?schema=public"
+    }
+  }
+}

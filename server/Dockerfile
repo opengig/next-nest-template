@@ -20,4 +20,4 @@ COPY . .
 RUN pnpm run build
 
 # Set the command to start the application
-CMD ["yarn", "backend"]
+CMD ["pnpm", "start"]
