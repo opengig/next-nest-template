@@ -3,18 +3,18 @@ import { PrismaController } from "./prisma.controller";
 import { PrismaService } from "./prisma.service";
 
 describe("PrismaController", () => {
-	let controller: PrismaController;
+  let controller: PrismaController;
 
-	beforeEach(async () => {
-		const module: TestingModule = await Test.createTestingModule({
-			controllers: [PrismaController],
-			providers: [PrismaService],
-		}).compile();
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [PrismaController],
+      providers: [PrismaService],
+    }).compile();
 
-		controller = module.get<PrismaController>(PrismaController);
-	});
+    controller = module.get<PrismaController>(PrismaController);
+  });
 
-	it("should be defined", () => {
-		expect(controller).toBeDefined();
-	});
+  it("should be defined", () => {
+    expect(controller).toBeDefined();
+  });
 });

@@ -7,29 +7,29 @@ import { UserRole } from "src/common/enums/user-role.enum";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-	constructor(
-		private reflector: Reflector,
-		private jwtService: JwtService,
-	) {}
+  constructor(
+    private reflector: Reflector,
+    private jwtService: JwtService,
+  ) {}
 
-	canActivate(context: ExecutionContext): boolean {
-		const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(
-			"roles",
-			[context.getHandler(), context.getClass()],
-		);
+  canActivate(context: ExecutionContext): boolean {
+    const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(
+      "roles",
+      [context.getHandler(), context.getClass()],
+    );
 
-		if (!requiredRoles) {
-			return true;
-		}
+    if (!requiredRoles) {
+      return true;
+    }
 
-		const request = context.switchToHttp().getRequest<Request>();
-		const token = request.headers.authorization?.split(" ")[1];
-		if (!token) {
-			return false;
-		}
+    const request = context.switchToHttp().getRequest<Request>();
+    const token = request.headers.authorization?.split(" ")[1];
+    if (!token) {
+      return false;
+    }
 
-		const user = this.jwtService.verify(token);
+    const user = this.jwtService.verify(token);
 
-		return requiredRoles.some((role) => user.role === role);
-	}
+    return requiredRoles.some((role) => user.role === role);
+  }
 }

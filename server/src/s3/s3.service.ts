@@ -6,24 +6,24 @@ import { S3_BUCKET_NAME, s3Client } from "src/aws-config";
 
 @Injectable()
 export class S3Service {
-	async uploadFile(file: Express.Multer.File, key: string): Promise<string> {
-		const command = new PutObjectCommand({
-			Bucket: S3_BUCKET_NAME,
-			Key: key,
-			Body: file.buffer,
-			ContentType: file.mimetype,
-		});
+  async uploadFile(file: Express.Multer.File, key: string): Promise<string> {
+    const command = new PutObjectCommand({
+      Bucket: S3_BUCKET_NAME,
+      Key: key,
+      Body: file.buffer,
+      ContentType: file.mimetype,
+    });
 
-		await s3Client.send(command);
-		return key;
-	}
+    await s3Client.send(command);
+    return key;
+  }
 
-	async getSignedUrl(key: string): Promise<string> {
-		const command = new GetObjectCommand({
-			Bucket: S3_BUCKET_NAME,
-			Key: key,
-		});
+  async getSignedUrl(key: string): Promise<string> {
+    const command = new GetObjectCommand({
+      Bucket: S3_BUCKET_NAME,
+      Key: key,
+    });
 
-		return getSignedUrl(s3Client, command, { expiresIn: 3600 }); // URL expires in 1 hour
-	}
+    return getSignedUrl(s3Client, command, { expiresIn: 3600 }); // URL expires in 1 hour
+  }
 }
