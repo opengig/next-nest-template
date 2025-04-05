@@ -3,11 +3,11 @@ import { PrismaService } from "src/prisma/prisma.service";
 
 @Injectable()
 export class UsersService {
-	constructor(private prismaService: PrismaService) {}
+  constructor(private prismaService: PrismaService) {}
 
-	async getUser(filter: any) {
-		return this.prismaService.users.findFirstOrThrow({
-			where: filter,
-		});
-	}
+  async getUser(filter: any) {
+    return this.prismaService.users.findFirstOrThrow({
+      where: filter,
+    });
+  }
 }
