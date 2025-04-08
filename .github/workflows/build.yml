@@ -1,0 +1,23 @@
+name: build
+
+on:
+  push:
+    branches: [ "main", "master"]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Optional: If you need Buildx to do multi-platform builds, keep this step.
+      # Otherwise, you can omit it.
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build Docker images
+        run: |
+          docker-compose -f docker-compose.yml build
