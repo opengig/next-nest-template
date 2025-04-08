@@ -1,0 +1,26 @@
+name: Docker Compose Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Docker version
+        run: docker --version
+
+      - name: Docker Compose version
+        run: docker compose version
+
+      - name: Build Docker images (Compose v2)
+        run: docker compose -f docker-compose.yml build
