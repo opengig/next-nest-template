@@ -16,6 +16,8 @@ RUN pnpm install
 # Copy the entire project directory to the container
 COPY . .
 
+RUN npx prisma generate
+
 # Build the Application
 RUN pnpm run build
 
