@@ -23,4 +23,4 @@ jobs:
         run: docker compose version
 
       - name: Build Docker images (Compose v2)
-        run: docker compose -f docker-compose.yml build
+        run: docker compose -f docker-compose.yaml build
