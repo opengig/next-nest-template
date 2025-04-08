@@ -5,7 +5,7 @@
         
         datasource db {
           provider = "postgresql"
-          url      = "postgresql://opengig:Database2024!@opengigmvp.postgres.database.azure.com:5432/hi2aa1a043?schema=public"
+          url      = env("DATABASE_URL")
         }
       
 model User {
