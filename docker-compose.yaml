@@ -1,24 +1,34 @@
 services:
-    web:
-        build:
-            context: ./web
-            dockerfile: Dockerfile
-        ports:
-            - "3000:3000" # Map container port to the host
-        volumes:
-            - ./web:/app # Mount web directory to container
-        env_file:
-            - ./web/.env # Load environment variables from web .env file
-        depends_on:
-            - server
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - web/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    restart: on-failure:5
+    networks:
+      - app_network
 
-    server:
-        build:
-            context: ./server
-            dockerfile: Dockerfile
-        ports:
-            - "8000:8000" # Map container port to the host
-        volumes:
-            - ./server:/app # Mount server directory to container
-        env_file:
-            - ./server/.env # Load environment variables from server .env file
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    env_file:
+      - server/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    restart: unless-stopped
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
