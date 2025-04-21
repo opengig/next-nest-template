@@ -4,18 +4,10 @@ services:
         container_name: postgresql
         image: postgres
         restart: always
-        volumes:
-            - ../docs:/docker-entrypoint-initdb.d
-        env_file:
-            - .env
+      
+        environment:
+            POSTGRES_USER: root
+            POSTGRES_PASSWORD: root
+            POSTGRES_DB: api
         ports:
             - "5442:5432"
-    pgadmin:
-        container_name: pgadmin4
-        image: dpage/pgadmin4
-        restart: always
-        environment:
-            PGADMIN_DEFAULT_EMAIL: admin@admin.com
-            PGADMIN_DEFAULT_PASSWORD: root
-        ports:
-            - "5052:80"

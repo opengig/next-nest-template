@@ -49,6 +49,13 @@ export const authOptions: AuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
     }),
   ],
   session: {
@@ -57,24 +64,7 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       if (account?.provider === "google") {
-        const { email, name } = profile!;
-        const response = await fetch("/api/users/google", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, name }),
-        });
-        const data = await response.json();
-        if (response.ok && data.data) {
-          user.id = data.data.user.id;
-          user.username = data.data.user.username;
-          user.name = data.data.user.name;
-          user.email = data.data.user.email;
-          user.token = data.data.token;
-          user.role = data.data.user.role;
-          return true;
-        } else {
-          return false;
-        }
+        return true; // Let NestJS handle the user creation/retrieval
       }
       return true;
     },

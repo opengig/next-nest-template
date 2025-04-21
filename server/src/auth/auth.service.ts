@@ -15,6 +15,26 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
+  async googleLogin(user: any) {
+    if (!user) {
+      return ResponseUtil.error("No user from google", 401);
+    }
+
+    const tokenPayload = {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    };
+
+    const accessToken = await this.jwtService.signAsync(tokenPayload);
+
+    return ResponseUtil.success(
+      { user, accessToken },
+      "User successfully authenticated via Google",
+      200,
+    );
+  }
+
   async getOtp(createOtpDto: CreateOtpDto) {
     try {
       const generateOtp = this.generateOtp();
@@ -108,8 +128,6 @@ export class AuthService {
           data: {
             email: email ?? null,
             mobileNumber: mobileNumber ?? null,
-            // created_at: new Date(),
-            // updated_at: new Date(),
             role: role,
           },
         });
