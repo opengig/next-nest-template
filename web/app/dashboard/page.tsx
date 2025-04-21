@@ -10,7 +10,7 @@ const Page = () => {
   useEffect(() => {
     if (status == "loading") return;
     if (data) {
-      router.push(`/dashboard/${data.user.role ?? "user"}`);
+      router.push(`/dashboard/`);
     } else {
       router.push("/login");
     }
@@ -18,7 +18,7 @@ const Page = () => {
   if (status === "loading") {
     return <div className="w-full text-center py-10">Loading...</div>;
   }
-  return <div className="w-full text-center py-10">redirecting...</div>;
+  return <div className="w-full text-center py-10">Welcome</div>;
 };
 
 export default Page;

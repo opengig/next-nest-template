@@ -27,7 +27,7 @@ const LoginPage = () => {
         password,
       });
       if (res?.ok) {
-        router.push(`/dashboard/${session?.user?.role ?? "user"}`);
+        router.push(`/dashboard/`);
       } else {
         toast.error(res?.error ?? "An error occurred");
       }

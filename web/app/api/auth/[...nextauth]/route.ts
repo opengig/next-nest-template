@@ -1,26 +1,5 @@
-import { authOptions } from "@/lib/authOptions";
-import NextAuth from "next-auth";
-
-declare module "next-auth" {
-  interface User {
-    id: string;
-    username: string;
-    name: string;
-    email: string;
-    role: string;
-    token: string;
-  }
-  interface Session {
-    user: {
-      id: string;
-      username: string;
-      name: string;
-      email: string;
-      role: string;
-    };
-    token: string;
-  }
-}
+import NextAuth from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 const handler = NextAuth(authOptions);
 
