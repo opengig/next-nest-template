@@ -53,13 +53,13 @@ Read more [here](./commitlint.config.js).
 
     - Naming Convention: Use PascalCase.
     - Purpose: Store reusable UI components.
-    - Examples: Header.jsx, Footer.jsx, UserProfile.jsx.
+    - Examples: Header.tsx, Footer.tsx, UserProfile.tsx.
 
 ### Pages Folder
 
     - Naming Convention: Use lowercase and hyphens.
     - Purpose: Store page components mapped to routes.
-    - Examples: index.jsx, about.jsx, api/users.js.
+    - Examples: index.tsx, about.tsx, api/users.js.
 
 ### Public Folder
 
@@ -83,16 +83,16 @@ Read more [here](./commitlint.config.js).
 
     - Naming Convention: Use camelCase.
     - Purpose: Store custom hooks.
-    - Examples: useAuth.js, useFetch.js.
+    - Examples: useAuth.ts, useFetch.ts.
 
 ### Context Folder
 
     - Naming Convention: Use PascalCase for context files.
     - Purpose: Store context providers and consumers.
-    - Examples: AuthContext.js.
+    - Examples: AuthContext.ts.
 
 ### Services Folder
 
     - Naming Convention: Use camelCase for files.
     - Purpose: Store service functions for API calls and business logic.
-    - Examples: api.js.
+    - Examples: api.ts.
