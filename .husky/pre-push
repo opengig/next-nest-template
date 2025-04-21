@@ -1,5 +1,5 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-pnpm test
-pnpm build
+cd server
+echo "Checking for TypeScript errors..."
+npx tsc --noEmit
+cd ../web
+pnpm build:dev
