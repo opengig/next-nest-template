@@ -77,7 +77,7 @@ Read more [here](./commitlint.config.js).
 
     - Naming Convention: Use camelCase for files.
     - Purpose: Store utility functions.
-    - Examples: fetchData.js, formatDate.js.
+    - Examples: fetchData.ts, formatDate.ts.
 
 ### Hooks Folder
 
