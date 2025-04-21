@@ -79,67 +79,6 @@ const SignupPage = () => {
           </p>
         </div>
         <form className="space-y-6" onSubmit={signUpUser}>
-          <div>
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              name="name"
-              type="text"
-              autoComplete="name"
-              required
-              className="mt-1"
-              placeholder="Enter your name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div>
-            <Label htmlFor="email">Email address</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="mt-1"
-              placeholder="name@example.com"
-            />
-          </div>
-          <div>
-            <Label htmlFor="role">Role</Label>
-            <Select required onValueChange={setRole} value={role}>
-              <SelectTrigger className="mt-1">
-                <SelectValue placeholder="Select your role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="tutor">Tutor</SelectItem>
-                <SelectItem value="student">Student</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="mt-1"
-              placeholder="Enter your password"
-            />
-          </div>
-          <Button type="submit" className="w-full">
-            {loading ? (
-              <LoaderCircleIcon className="animate-spin" />
-            ) : (
-              "Sign up"
-            )}
-          </Button>
           <Button
             disabled={googleLoading}
             variant="outline"
