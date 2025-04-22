@@ -1,5 +1,5 @@
 # Use the official Node.js LTS (Long Term Support) image as the base image
-FROM node:18
+FROM node:20
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
@@ -16,10 +16,10 @@ RUN pnpm install
 # Copy the entire project directory to the container
 COPY . .
 
-RUN npx prisma generate
+RUN pnpm prisma generate
 
 # Build the Application
-RUN pnpm run build
+RUN pnpm build
 
 # Set the command to start the application
-CMD ["pnpm", "start"]
+CMD ["pnpm", "start:prod"]

@@ -1,17 +1,23 @@
-import { apiUrl } from '@/config';
+import { envConfig } from '@/config';
 import axios, { AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios';
+import { parseMessage } from '@/utils';
 import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import { getSession } from 'next-auth/react';
-import { authOptions } from './auth';
 
-type ApiResult<T> = {
-	data?: T;
-	error?: {
-		message: string;
-		status: number;
-		details?: Record<string, unknown>;
-	};
-};
+type ApiResult<T> =
+	| {
+			data: T;
+			error?: never;
+	  }
+	| {
+			data?: never;
+			error: {
+				message: string;
+				status: number;
+				details?: Record<string, unknown>;
+			};
+	  };
 
 export class ApiClient {
 	static async request<T>(config: AxiosRequestConfig): Promise<ApiResult<T>> {
@@ -19,49 +25,28 @@ export class ApiClient {
 			const isServer = typeof window === 'undefined';
 			const session = isServer ? await getServerSession(authOptions) : await getSession();
 
-			const headers: Record<string, string> = {};
-
-			if (session?.user?.token && !config.url?.endsWith('/api/auth/google')) {
-				headers.Authorization = `Bearer ${session.user.token}`;
-			}
-
-			if (!(config.data instanceof FormData)) {
-				headers['Content-Type'] = 'application/json';
-			}
+			const isFormData = config.data instanceof FormData;
 
 			const client = axios.create({
-				baseURL: apiUrl,
-				headers,
+				baseURL: envConfig.apiUrl,
+				headers: {
+					...(config.data && !isFormData ? { 'Content-Type': 'application/json' } : {}),
+					Authorization: `Bearer ${session?.user?.token}`,
+				},
 			});
 			const response: AxiosResponse<T> = await client.request(config);
 			return { data: response.data };
 		} catch (err) {
-			const error = err as Error;
-			console.error('API Client error:', {
-				url: config.url,
-				method: config.method,
-				error: error.message,
-				response: isAxiosError(err) ? err.response?.data : undefined
-			});
 			if (isAxiosError(err)) {
-				if (err.response?.status === 422) {
-					const message = Object.values(err.response?.data.data).join(', ');
-					return {
-						error: {
-							message,
-							details: err.response?.data.data,
-							status: err.response?.status || 500,
-						},
-					};
-				}
 				return {
 					error: {
-						message: err.response?.data.message,
+						message: parseMessage(err.response?.data.message),
 						details: err.response?.data.data,
 						status: err.response?.status || 500,
 					},
 				};
 			}
+			console.log(err);
 			return {
 				error: {
 					message: 'An unknown error occurred',
@@ -87,7 +72,7 @@ export class ApiClient {
 		return this.request<T>({ method: 'PATCH', url, data });
 	}
 
-	static async delete<T>(url: string): Promise<ApiResult<T>> {
-		return this.request<T>({ method: 'DELETE', url });
+	static async delete<T>(url: string, params?: Record<string, unknown>): Promise<ApiResult<T>> {
+		return this.request<T>({ method: 'DELETE', url, params });
 	}
 }
