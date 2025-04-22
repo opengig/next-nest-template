@@ -1,7 +1,3 @@
-# REPO="repo-name"
-# echo "$HOME/$REPO"
-# cd "$HOME/$REPO"
-
 git pull
 
 echo "Building and starting docker containers"

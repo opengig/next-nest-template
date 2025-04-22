@@ -1,98 +1,233 @@
-# Project Setup
+# Next.js + NestJS Template
 
-1. This is a momo repo for both frontend (`web`) and the backend (`server`).
+A modern full-stack template featuring Next.js for frontend and NestJS for backend, with built-in authentication, email service, and more.
 
-## Running the projects
+## 🚀 Features
 
-Refer the readme of the project you want to run in their directory
+- **Frontend**: Next.js 14 with App Router
+- **Backend**: NestJS with Prisma ORM
+- **UI Components**: shadcn/ui components
+- **Authentication**: JWT-based auth system
+- **Email Service**: Built-in email service with templates
+- **Docker Support**: Containerization ready
+- **Type Safety**: Full TypeScript support
+- **API Client**: Axios-based API client with interceptors, automatic token handling, and type-safe responses
+- **Form Validation**: Zod-based schema validation
+- **State Management**: Built-in store setup
+- **Theme**: Dark/Light mode support
 
-1. Frontend: [README](./web/README.md)
-2. Backend: [README](./server/README.md)
 
-## Docker
+## 🛠 Setup Instructions
 
-You can also run the project through docker.
+### Prerequisites
 
-1. Make sure you have docker and docker compose installed and docker daemon running in your system.
-2. In the root of the project, run:
+- Node.js 20+
+- pnpm
+- Docker (optional, for containerized deployment)
 
-```sh
-docker compose up -d --build
+### Environment Setup
+
+1. **Frontend Setup**
+   ```bash
+   cd web
+   cp .env.example .env
+   pnpm install
+   ```
+
+2. **Backend Setup**
+   ```bash
+   cd server
+   cp .env.example .env
+   pnpm install
+   ```
+
+3. **Database Setup**
+   ```bash
+   cd server
+   pnpm prisma generate
+   pnpm prisma db push
+   ```
+
+### Development
+
+1. **Start Backend Server**
+   ```bash
+   cd server
+   pnpm start:dev
+   ```
+
+2. **Start Frontend Development Server**
+   ```bash
+   cd web
+   pnpm dev
+   ```
+
+### Production Deployment
+
+Using Docker:
+```bash
+./deploy-docker.sh
 ```
 
-# Git guidelines
-
--   The `master` branch is used for production and the `dev` branch is used for development environment.
--   All the work should be done in a `feature/` branch and should be sourced from `dev` branch.
--   Keep taking pull `dev` branch to avoid any future conflicts.
--   Any work can't be pushed in the `master` branch directly, for a production deployment, raise a PR from the `dev` branch to the `master` branch.
-
-The project has git hooks setup with the following checks:
--   Formats all the files with prettier before every commit.
--   Check for linting issues before every commit
--   Runs all unit tests before every push
--   Makes a build before every push
-
-Do not ignore or override them to prevent any further issues.
-
-## Commit Guidelines
-
-A healthy commit message is written in third form of verb, depicting the exact work in message as small as possible.
-Always format your message in the following way:
+## 📁 Project Structure
 
 ```
-subject: message
+├── web/                 # Frontend (Next.js)
+│   ├── app/             # App router pages
+│   ├── components/      # React components
+│   ├── constants/       # Constants files
+│   ├── hooks/           # React Hooks
+│   ├── lib/             # Lib Functions like, ApiClient, authOptions for NextAuth
+│   ├── config/          # Mainly for Environment config
+│   ├── services/        # API services Must call backend apis through this
+│   ├── store/           # Zustand State management use for global state management
+│   ├── utils/           # All utils Functions goes here
+│   ├── validations/     # Zod schemas
+│   └── types/           # TypeScript types
+│
+├── server/              # Backend (NestJS)
+│   ├── src/
+│   │   ├── auth/       # Authentication module
+│   │   ├── mail/       # Email service
+│   │   └── prisma/     # Database module
+│   └── prisma/         # Prisma schema & client
+│
+└── docs/               # Documentation
 ```
 
-The `subject` can be any one of the following: build, ci, docs, feat, fix, perf, refactor, style, test, config <br />
-Read more [here](./commitlint.config.js).
+## 📋 Coding Standards
 
-## General Guidelines
+### General Standards
 
-### Components Folder
+- Use TypeScript for all new code
+- Follow ESLint and Prettier configurations
+- Use meaningful commit messages following commitlint
 
-    - Naming Convention: Use PascalCase.
-    - Purpose: Store reusable UI components.
-    - Examples: Header.tsx, Footer.tsx, UserProfile.tsx.
+### Frontend Standards
 
-### Pages Folder
+1. **Components**
+   - Use functional components with hooks
+   - Follow atomic design principles
+   - Place reusable components in `components/` directory
+   - Use shadcn/ui components for consistent UI
+   - Always write modular and clean code
+   - Follow DRY principle
 
-    - Naming Convention: Use lowercase and hyphens.
-    - Purpose: Store page components mapped to routes.
-    - Examples: index.tsx, about.tsx, api/users.js.
+2. **State Management**
+   - Use React hooks for local state
+   - Implement global state in `store/` directory
+   - Keep state logic separate from UI components
 
-### Public Folder
+3. **API Integration**
+   - Use services from `services/` directory for all API calls
+   - Create type-safe service methods using ApiClient
+   - Implement proper loading states and error handling
+   - Never call API endpoints directly; always create a service method
+   - Example service pattern:
+     ```typescript
+     // services/user.service.ts
+     import { ApiClient } from '@/lib/api-client';
+     import { User, UpdateUserDto } from '@/types';
 
-    - Naming Convention: Use lowercase and hyphens.
-    - Purpose: Store static assets like images and fonts.
-    - Examples: images/logo.png, fonts/Roboto.woff2.
+     export class UserService {
+       static async getProfile() {
+         return await ApiClient.get<User>('/api/users/profile');
+       }
 
-### Styles Folder
+       static async updateProfile(data: UpdateUserDto) {
+         return await ApiClient.patch<User>('/api/users/profile', data);
+       }
+     }
+     ```
 
-    - Naming Convention: Use lowercase and hyphens for global styles, PascalCase for module-specific styles.
-    - Purpose: Store global CSS files and CSS modules.
-    - Examples: globals.css, Home.module.css.
+4. **Routing**
+   - Use App Router conventions
+   - Implement proper loading and error states
+   - Keep route handlers clean and focused
 
-### Utils Folder
+### Backend Standards
 
-    - Naming Convention: Use camelCase for files.
-    - Purpose: Store utility functions.
-    - Examples: fetchData.ts, formatDate.ts.
+1. **Architecture**
+   - Follow NestJS module architecture
+   - Use dependency injection
+   - Implement DTOs for data validation, add ApiProperty Tag to each dto field for swagger
+   - Follow RESTful API conventions
 
-### Hooks Folder
+2. **Database**
+   - Use Prisma for database operations
+   - Write clean and optimized queries
+   - Use transactions where necessary
 
-    - Naming Convention: Use camelCase.
-    - Purpose: Store custom hooks.
-    - Examples: useAuth.ts, useFetch.ts.
+3. **Security**
+   - Implement proper authentication checks
+   - Validate all input data
+   - Follow security best practices
+   - Use environment variables for sensitive data
 
-### Context Folder
+## 📚 Documentation
 
-    - Naming Convention: Use PascalCase for context files.
-    - Purpose: Store context providers and consumers.
-    - Examples: AuthContext.ts.
+### API Client Usage
 
-### Services Folder
+The `ApiClient` class provides a type-safe way to make HTTP requests with automatic token handling and error formatting:
 
-    - Naming Convention: Use camelCase for files.
-    - Purpose: Store service functions for API calls and business logic.
-    - Examples: api.ts.
+```typescript
+// Example usage:
+import { ApiClient } from '@/lib/api-client';
+
+// GET request
+const response = await ApiClient.get<UserType>('/api/users/profile');
+if (response.data) {
+  // response.data is typed as UserType
+  console.log(response.data);
+} else {
+  // response.error contains formatted error details
+  console.error(response.error.message);
+}
+
+// POST request with data
+const loginResponse = await ApiClient.post<LoginResponse>('/api/auth/login', { 
+  email, 
+  password 
+});
+```
+
+Return type for all API calls:
+```typescript
+type ApiResult<T> =
+  | {
+      data: T;
+      error?: never;
+    }
+  | {
+      data?: never;
+      error: {
+        message: string;
+        status: number;
+        details?: Record<string, unknown>;
+      };
+    };
+```
+
+### Authentication System
+
+The authentication system provides:
+- JWT-based authentication with automatic token handling
+- Multiple authentication methods:
+  - Google OAuth authentication
+  - Email OTP-based authentication
+- Protected routes by default with `@Public()` decorator for public endpoints
+- Easy access to user data via `@CurrentUser()` decorator
+- Type-safe user information with `RequestUser` interface
+
+[Detailed Authentication Documentation](./docs/authentication.md)
+
+### Email Templates
+
+The email service features:
+- Type-safe template system with HTML support
+- Built-in templates for OTP and Welcome emails
+- Easy template creation with TypeScript types
+- Automatic context validation
+- Placeholder system using `{{variableName}}` syntax
+
+[Detailed Email Templates Documentation](./docs/email-templates.md)

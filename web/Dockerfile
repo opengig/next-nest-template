@@ -1,11 +1,10 @@
-# Base image for building
-FROM node:20-alpine AS builder
+FROM node:20-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Install pnpm (since the project uses pnpm)
-RUN npm install -g pnpm
+# Install pnpm with specific version
+RUN corepack enable
+RUN corepack prepare pnpm@9.15.4 --activate
 
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
@@ -13,30 +12,16 @@ COPY package.json pnpm-lock.yaml ./
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Copy the rest of the application code
+# Copy application code
 COPY . .
 
-# Build the application
+# Build application
 RUN pnpm build
 
-# Production image
-FROM node:20-alpine AS runner
-
-WORKDIR /app
-
-# Install pnpm
-RUN npm install -g pnpm
-
-# Set environment to production
+# Expose port
+EXPOSE 3000
+ENV PORT 3000
 ENV NODE_ENV production
 
-# Copy necessary files from builder
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-
-# Expose the port the app runs on
-EXPOSE 3000
-
-# Set the command to run the app
+# Start the application
 CMD ["pnpm", "start"]

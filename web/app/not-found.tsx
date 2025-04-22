@@ -1,21 +1,45 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { FileQuestion } from "lucide-react";
+'use client';
+import React from 'react';
+import Link from 'next/link';
+import { Frown, Home, ArrowLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function NotFound() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-primary/10 to-secondary/10">
-      <div className="text-center space-y-6">
-        <FileQuestion className="h-24 w-24 text-primary mx-auto" />
-        <h1 className="text-4xl font-bold text-primary">404</h1>
-        <h2 className="text-2xl font-semibold">Page Not Found</h2>
-        <p className="text-muted-foreground max-w-md mx-auto">
-          Oops! The page you're looking for doesn't exist.
-        </p>
-        <Button asChild className="bg-primary hover:bg-primary/90">
-          <Link href="/">Back to Home</Link>
-        </Button>
-      </div>
-    </div>
-  );
-}
+const NotFoundPage = () => {
+	return (
+		<div className='flex min-h-screen items-center justify-center bg-background p-4'>
+			<Card className='w-full max-w-md text-center'>
+				<CardHeader>
+					<CardTitle className='flex items-center justify-center text-3xl'>
+						<Frown className='mr-3 h-12 w-12 text-primary' />
+						404 - Page Not Found
+					</CardTitle>
+					<CardDescription className='text-base'>
+						Oops! The page you&apos;re looking for doesn&apos;t exist.
+					</CardDescription>
+				</CardHeader>
+				<CardContent className='space-y-6'>
+					<div className='rounded-lg border border-dashed border-primary/20 bg-muted/10 p-6'>
+						<p className='text-muted-foreground'>
+							The requested URL might have been removed, renamed, or temporarily unavailable.
+						</p>
+					</div>
+					<div className='flex flex-col space-y-4'>
+						<Button asChild className='w-full'>
+							<Link href='/'>
+								<Home className='mr-2 h-4 w-4' />
+								Return to Home
+							</Link>
+						</Button>
+						<Button variant='outline' className='w-full' onClick={() => window.history.back()}>
+							<ArrowLeft className='mr-2 h-4 w-4' />
+							Go Back
+						</Button>
+					</div>
+				</CardContent>
+			</Card>
+		</div>
+	);
+};
+
+export default NotFoundPage;

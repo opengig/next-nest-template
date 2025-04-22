@@ -1,5 +1,7 @@
 cd server
 echo "Checking for TypeScript errors..."
+pnpm lint
 npx tsc --noEmit
 cd ../web
-pnpm build:dev
+pnpm lint
+pnpm build

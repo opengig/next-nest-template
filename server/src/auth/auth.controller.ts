@@ -1,32 +1,27 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from "@nestjs/common";
-import { AuthGuard } from "@nestjs/passport";
-import { AuthService } from "./auth.service";
-import { CreateOtpDto } from "./dto/create-otp.request";
-import { CreateUserDto } from "src/users/dto/create-user.request";
+import { Body, Controller, Post } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { Public } from './decorators/public.decorator';
+import { GoogleAuthDto, OtpAuthDto, VerifyOtpDto } from './dto/auth.dto';
 
-@Controller("auth")
+@Controller('/api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+	constructor(private readonly authService: AuthService) {}
 
-  @Get("google")
-  @UseGuards(AuthGuard("google"))
-  async googleAuth() {
-    // This endpoint initiates Google OAuth flow
-  }
+	@Post('google')
+	@Public()
+	async googleAuth(@Body() body: GoogleAuthDto) {
+		return this.authService.handleGoogleAuth(body.idToken);
+	}
 
-  @Get("google/callback")
-  @UseGuards(AuthGuard("google"))
-  async googleAuthRedirect(@Req() req) {
-    return this.authService.googleLogin(req.user);
-  }
+	@Post('otp')
+	@Public()
+	async otpAuth(@Body() body: OtpAuthDto) {
+		return this.authService.handleOtpAuth(body.email);
+	}
 
-  @Post("otps")
-  createOtp(@Body() createOtp: CreateOtpDto) {
-    return this.authService.getOtp(createOtp);
-  }
-
-  @Post("users")
-  createUser(@Body() createUserDto: CreateUserDto) {
-    return this.authService.getUser(createUserDto);
-  }
+	@Post('otp/verify')
+	@Public()
+	async verifyOtp(@Body() body: VerifyOtpDto) {
+		return this.authService.verifyOtp(body.email, body.otp);
+	}
 }
