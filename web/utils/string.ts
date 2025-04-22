@@ -51,6 +51,7 @@ export const capitalizeFirstLetter = (text: string) => {
 };
 
 export const parseMessage = (message: string) => {
+	if (!message) return '';
 	if (!message.includes('_')) {
 		return message.charAt(0).toUpperCase() + message.slice(1).toLowerCase();
 	}
