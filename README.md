@@ -15,6 +15,7 @@ A modern full-stack template featuring Next.js for frontend and NestJS for backe
 - **Form Validation**: Zod-based schema validation
 - **State Management**: Built-in store setup
 - **Theme**: Dark/Light mode support
+- **LLM Service**: Built-in LLM service with Gemini support, type-safe responses, and retry mechanisms
 
 
 ## 🛠 Setup Instructions
@@ -231,3 +232,15 @@ The email service features:
 - Placeholder system using `{{variableName}}` syntax
 
 [Detailed Email Templates Documentation](./docs/email-templates.md)
+
+### LLM Service
+
+The LLM service features:
+- Type-safe interaction with Large Language Models
+- Support for both string and JSON responses
+- Configurable retry mechanisms with exponential backoff
+- Temperature control for response randomness
+- Automatic error handling and response formatting
+- Built-in support for Gemini model
+
+[Detailed LLM Service Documentation](./docs/llm-service.md)

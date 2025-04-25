@@ -23,4 +23,10 @@ export const config = {
 			fromName: process.env.SMTP_FROM_NAME ?? 'Opengig',
 		},
 	},
+	llm: {
+		gemini: {
+			apiKey: process.env.GEMINI_API_KEY!,
+			baseUrl: process.env.GEMINI_BASE_URL!,
+		},
+	},
 };

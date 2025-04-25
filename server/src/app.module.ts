@@ -8,25 +8,21 @@ import { AuthModule } from './auth/auth.module';
 
 @Module({
 	imports: [
-		LoggerModule.forRootAsync({
-			imports: [],
-			useFactory: () => {
-				const isProduction = process.env.NODE_ENV === 'production';
-				return {
-					pinoHttp: {
-						transport: isProduction
-							? undefined
-							: {
-									target: 'pino-pretty',
-									options: {
-										singleLine: true,
-									},
-								},
-						level: isProduction ? 'info' : 'debug',
+		LoggerModule.forRoot({
+			pinoHttp: {
+				transport: {
+					target: 'pino-pretty',
+					options: {
+						colorize: true,
+						singleLine: false,
+						translateTime: 'yyyy-mm-dd HH:MM:ss.l',
+						hideObject: true,
+						ignore: 'pid,hostname',
+						messageFormat: '[{req.id}] {req.method} {req.url} - {msg}  {res.statusCode} {responseTime}',
 					},
-				};
+				},
+				level: 'debug',
 			},
-			inject: [],
 		}),
 		AuthModule,
 	],
