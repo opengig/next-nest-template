@@ -24,4 +24,12 @@ export type LLMOptions = {
 	 * LLM model to use
 	 */
 	model: LLMModel;
+	/**
+	 * Name of the model to use
+	 */
+	modelName: string;
+	/**
+	 * Retry options
+	 */
+	retryOptions?: RetryOptions;
 };

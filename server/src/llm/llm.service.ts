@@ -5,6 +5,13 @@ import { config } from 'src/common/config';
 import { safeParseJson } from 'src/common/utils/parse.utils';
 import { RetryOptions, LLMOptions, LLMModel } from './types/llm';
 
+const defaultLLMOptions: LLMOptions = {
+	temperature: 0.3,
+	model: 'gemini',
+	modelName: 'gemini-2.0-flash',
+	retryOptions: { maxAttempts: 3, delayMs: 1000, strategy: 'exponential' },
+};
+
 /**
  * Service for handling Large Language Model (LLM) interactions.
  * Currently supports Gemini model through OpenAI-compatible API interface.
@@ -33,11 +40,6 @@ export class LLMService {
 	 * Executes an operation with retry logic
 	 * @private
 	 * @template T - The type of the operation result
-	 * @param {() => Promise<T>} operation - The async operation to execute
-	 * @param {RetryOptions} options - Retry configuration options
-	 * @param {number} options.maxAttempts - Maximum number of retry attempts (default: 3)
-	 * @param {number} options.delayMs - Base delay between retries in milliseconds (default: 1000)
-	 * @param {'exponential' | 'fixed'} options.strategy - Retry delay strategy (default: 'exponential')
 	 * @returns {Promise<T>} The result of the successful operation
 	 * @throws {Error} If all retry attempts fail
 	 */
@@ -83,29 +85,22 @@ export class LLMService {
 	/**
 	 * Generates content using the specified LLM model
 	 * @template T - The expected response type (string or object)
-	 * @param {ChatCompletionMessageParam[]} messages - The conversation messages to send to the model
-	 * @param {'string' | 'json'} responseFormat - The desired response format (default: 'string')
-	 * @param {LLMOptions} options - Model configuration options
-	 * @param {number} options.temperature - Controls randomness in the response (0.0 to 1.0)
-	 * @param {LLMModel} options.model - The LLM model to use (default: 'gemini')
-	 * @param {RetryOptions} retryOptions - Configuration for retry behavior
 	 * @returns {Promise<T>} The generated content in the specified format
 	 * @throws {Error} If the generation fails after all retry attempts
 	 */
 	public async generate<T extends string | object>(
 		messages: ChatCompletionMessageParam[],
+		options: LLMOptions = defaultLLMOptions,
 		responseFormat: 'string' | 'json' = 'string',
-		options: LLMOptions = { temperature: 0.0, model: 'gemini' },
-		retryOptions: RetryOptions = { maxAttempts: 3, delayMs: 1000, strategy: 'fixed' },
 	): Promise<T> {
 		const response = await this.retryOperation(async () => {
 			return await this.getModel(options.model).chat.completions.create({
-				model: 'gpt-4o',
+				model: options.modelName ?? 'gemini-2.0-flash',
 				messages,
 				temperature: options.temperature,
 				response_format: responseFormat === 'json' ? { type: 'json_object' } : undefined,
 			});
-		}, retryOptions);
+		}, options.retryOptions);
 		if (responseFormat === 'json') {
 			const exactResponse = response.choices[0].message.content ?? '{}';
 			const parsedContent = safeParseJson(exactResponse);
