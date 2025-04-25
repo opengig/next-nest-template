@@ -10,7 +10,7 @@
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"type-check": "tsc --noEmit",
-		"prepare": "husky",
+		"prepare": "cd .. && npx husky",
 		"test": "jest --json --outputFile=test-results.json --coverage",
 		"test:watch": "jest --watch"
 	},

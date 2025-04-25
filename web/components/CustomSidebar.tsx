@@ -19,8 +19,9 @@ import {
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { ThemeToggle } from './ThemeToggle';
+import { getInitials } from '@/utils';
 
-type SidebarRoute = {
+export type SidebarRoute = {
 	name: string;
 	url: string;
 	isAdmin: boolean;
@@ -47,23 +48,24 @@ export function SidebarComponent({ children, pages }: { children: React.ReactNod
 				<SidebarHeader>
 					<SidebarMenu>
 						<SidebarMenuItem>
-							<Avatar className='flex h-8 w-8 items-center justify-center rounded-sm bg-transparent p-1'>
-								<AvatarImage src={user?.avatarUrl ?? undefined} className='rounded-sm' />
-								<AvatarFallback className='rounded-sm'>
-									{user?.name
-										? user?.name
-												.split(' ')
-												.map((word) => word[0])
-												.join('')
-												.slice(0, 2)
-												.toUpperCase()
-										: 'QI'}
-								</AvatarFallback>
-							</Avatar>
-							<div className='grid flex-1 text-left text-sm leading-tight'>
-								<span className='truncate font-semibold'>{user?.name ?? 'Unknown'}</span>
-								<span className='truncate text-xs'>{user?.email ?? 'Unknown'}</span>
-							</div>
+							<SidebarMenuButton
+								size='lg'
+								asChild
+								className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
+							>
+								<div className='flex items-center gap-2'>
+									<Avatar className='flex h-8 w-8 items-center justify-center rounded-sm bg-transparent p-1'>
+										<AvatarImage src={user?.avatarUrl ?? undefined} className='rounded-sm' />
+										<AvatarFallback className='rounded-sm'>
+											{user?.name ? getInitials(user?.name) : 'OG'}
+										</AvatarFallback>
+									</Avatar>
+									<div className='grid flex-1 text-left text-sm leading-tight'>
+										<span className='truncate font-semibold'>{user?.name ?? 'Unknown'}</span>
+										<span className='truncate text-xs'>{user?.email ?? 'Unknown'}</span>
+									</div>
+								</div>
+							</SidebarMenuButton>
 						</SidebarMenuItem>
 					</SidebarMenu>
 				</SidebarHeader>
