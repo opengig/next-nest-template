@@ -186,3 +186,20 @@ The email service features:
 - Placeholder system using `{{variableName}}` syntax
 
 [Detailed Email Templates Documentation](./docs/email-templates.md)
+
+### LLM Service
+
+The LLM service features:
+- Type-safe interaction with Large Language Models
+- Support for both string and JSON responses
+- Configurable retry mechanisms with exponential backoff
+- Temperature control for response randomness
+- Automatic error handling and response formatting
+- Built-in support for Gemini model
+
+[Detailed LLM Service Documentation](./docs/llm-service.md)
+
+## Extract Text Util Function (server/src/common/utils/extractText.utils.ts)
+- Extract Text from File
+- Supported File Types : PDF, DOCX, TEXT, CSV, XLSX
+- Just Call extract `async extractTextFromDocument(file: Express.Multer.File):string` function.

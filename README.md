@@ -244,3 +244,8 @@ The LLM service features:
 - Built-in support for Gemini model
 
 [Detailed LLM Service Documentation](./docs/llm-service.md)
+
+## Extract Text Util Function (server/src/common/utils/extractText.utils.ts)
+- Extract Text from File
+- Supported File Types : PDF, DOCX, TEXT, CSV, XLSX
+- Just Call extract `async extractTextFromDocument(file: Express.Multer.File):string` function.
