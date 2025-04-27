@@ -1,5 +1,5 @@
-import mammoth from 'mammoth';
-import xlsx from 'xlsx';
+import * as mammoth from 'mammoth';
+import * as xlsx from 'xlsx';
 
 /**
  * Extracts text from a document
@@ -28,7 +28,7 @@ export async function extractTextFromDocument(file: Express.Multer.File) {
 			const workbook = xlsx.read(file.buffer);
 			return workbook.SheetNames.map((sheetName) => {
 				const sheet = workbook.Sheets[sheetName];
-				return `Sheet: ${sheetName}\n${xlsx.utils.sheet_to_txt(sheet)}`;
+				return `Sheet: ${sheetName}\n${xlsx.utils.sheet_to_csv(sheet)}`;
 			}).join('\n\n');
 		}
 
