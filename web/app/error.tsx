@@ -3,6 +3,7 @@ import React from 'react';
 import { AlertTriangle, Home, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
 
 interface ErrorProps {
 	error: Error & { digest?: string };
@@ -32,10 +33,10 @@ const ErrorPage: React.FC<ErrorProps> = ({ error, reset }) => {
 							Try Again
 						</Button>
 						<Button variant='secondary' className='w-full' asChild>
-							<a href='/'>
+							<Link href='/'>
 								<Home className='mr-2 h-4 w-4' />
 								Home
-							</a>
+							</Link>
 						</Button>
 					</div>
 				</CardContent>

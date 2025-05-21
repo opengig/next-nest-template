@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { LogOut, LucideProps } from 'lucide-react';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
 	Sidebar,
 	SidebarContent,
@@ -19,7 +18,7 @@ import {
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { ThemeToggle } from './ThemeToggle';
-import { getInitials } from '@/utils';
+import { NavUser } from './NavUser';
 
 export type SidebarRoute = {
 	name: string;
@@ -37,7 +36,7 @@ export default function AppSidebar({ children, pages }: { children: React.ReactN
 	);
 }
 
-export function SidebarComponent({ children, pages }: { children: React.ReactNode; pages: SidebarRoute[] }) {
+function SidebarComponent({ children, pages }: { children: React.ReactNode; pages: SidebarRoute[] }) {
 	const { setOpenMobile } = useSidebar();
 	const { data: session } = useSession();
 	const user = session?.user;
@@ -46,28 +45,13 @@ export function SidebarComponent({ children, pages }: { children: React.ReactNod
 		<>
 			<Sidebar collapsible='icon'>
 				<SidebarHeader>
-					<SidebarMenu>
-						<SidebarMenuItem>
-							<SidebarMenuButton
-								size='lg'
-								asChild
-								className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
-							>
-								<div className='flex items-center gap-2'>
-									<Avatar className='flex h-8 w-8 items-center justify-center rounded-sm bg-transparent p-1'>
-										<AvatarImage src={user?.avatarUrl ?? undefined} className='rounded-sm' />
-										<AvatarFallback className='rounded-sm'>
-											{user?.name ? getInitials(user?.name) : 'OG'}
-										</AvatarFallback>
-									</Avatar>
-									<div className='grid flex-1 text-left text-sm leading-tight'>
-										<span className='truncate font-semibold'>{user?.name ?? 'Unknown'}</span>
-										<span className='truncate text-xs'>{user?.email ?? 'Unknown'}</span>
-									</div>
-								</div>
-							</SidebarMenuButton>
-						</SidebarMenuItem>
-					</SidebarMenu>
+					<NavUser
+						user={{
+							avatar: user?.avatarUrl ?? '',
+							name: user?.name ?? '',
+							email: user?.email ?? '',
+						}}
+					/>
 				</SidebarHeader>
 				<SidebarContent>
 					<SidebarMenu>
