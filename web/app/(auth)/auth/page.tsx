@@ -92,7 +92,7 @@ export default function LoginPage() {
 	}
 
 	return (
-		<div className='flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-background/50 to-muted/30 p-4'>
+		<div className='from-background/50 to-muted/30 flex min-h-screen w-full items-center justify-center bg-linear-to-br p-4'>
 			<motion.div
 				className='mx-auto w-full max-w-md'
 				initial={{ opacity: 0, y: 20 }}
@@ -161,7 +161,7 @@ export default function LoginPage() {
 											/>
 											<div className='text-center'>
 												{resendTimer > 0 ? (
-													<p className='text-sm text-muted-foreground'>Resend code in {resendTimer}s</p>
+													<p className='text-muted-foreground text-sm'>Resend code in {resendTimer}s</p>
 												) : (
 													<Button
 														type='button'
@@ -178,7 +178,7 @@ export default function LoginPage() {
 									)}
 								</AnimatePresence>
 
-								<Button type='submit' className='w-full shadow-sm' disabled={isLoading}>
+								<Button type='submit' className='w-full shadow-xs' disabled={isLoading}>
 									{isLoading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
 									{showOTP ? 'Verify code' : 'Continue with email'}
 								</Button>
@@ -188,17 +188,17 @@ export default function LoginPage() {
 					<CardFooter className='flex flex-col space-y-4 pt-6'>
 						<div className='relative w-full'>
 							<div className='absolute inset-0 flex items-center'>
-								<div className='w-full border-t border-muted' />
+								<div className='border-muted w-full border-t' />
 							</div>
 							<div className='relative flex justify-center text-xs uppercase'>
-								<span className='bg-background px-2 text-muted-foreground'>Or continue with</span>
+								<span className='bg-background text-muted-foreground px-2'>Or continue with</span>
 							</div>
 						</div>
 						<motion.div className='w-full' whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
 							<Button
 								variant='outline'
 								onClick={() => signIn('google', { callbackUrl: '/' })}
-								className='w-full shadow-sm'
+								className='w-full shadow-xs'
 							>
 								Google
 							</Button>

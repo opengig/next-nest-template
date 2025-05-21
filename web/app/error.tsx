@@ -11,19 +11,19 @@ interface ErrorProps {
 
 const ErrorPage: React.FC<ErrorProps> = ({ error, reset }) => {
 	return (
-		<div className='flex min-h-screen items-center justify-center bg-background p-4'>
+		<div className='bg-background flex min-h-screen items-center justify-center p-4'>
 			<Card className='w-full max-w-md'>
 				<CardHeader className='text-center'>
 					<CardTitle className='mb-4 flex items-center justify-center'>
-						<AlertTriangle className='mr-2 h-12 w-12 text-destructive' />
+						<AlertTriangle className='text-destructive mr-2 h-12 w-12' />
 						Error Occurred
 					</CardTitle>
 					<CardDescription>Something unexpected happened</CardDescription>
 				</CardHeader>
 				<CardContent className='space-y-6'>
-					<div className='rounded-lg bg-muted/50 p-4'>
-						<p className='break-words text-sm text-muted-foreground'>{error.message || 'An unknown error occurred'}</p>
-						{error.digest && <p className='mt-2 text-xs text-muted-foreground'>Error ID: {error.digest}</p>}
+					<div className='bg-muted/50 rounded-lg p-4'>
+						<p className='text-muted-foreground text-sm break-words'>{error.message || 'An unknown error occurred'}</p>
+						{error.digest && <p className='text-muted-foreground mt-2 text-xs'>Error ID: {error.digest}</p>}
 					</div>
 
 					<div className='flex justify-center space-x-4'>

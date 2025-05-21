@@ -76,7 +76,7 @@ export function SidebarComponent({ children, pages }: { children: React.ReactNod
 								<SidebarMenuItem key={item.name}>
 									<SidebarMenuButton asChild>
 										<Link href={item.url} onClick={() => setOpenMobile(false)} className='gap-3'>
-											<item.icon className='!h-6' />
+											<item.icon className='h-6!' />
 											<span>{item.name}</span>
 										</Link>
 									</SidebarMenuButton>
@@ -108,7 +108,7 @@ export function SidebarComponent({ children, pages }: { children: React.ReactNod
 					</div>
 					<ThemeToggle />
 				</header>
-				<div className='h-[calc(100dvh-48px)] w-full overflow-auto bg-background px-3 py-0'>{children}</div>
+				<div className='bg-background h-[calc(100dvh-48px)] w-full overflow-auto px-3 py-0'>{children}</div>
 			</SidebarInset>
 		</>
 	);
