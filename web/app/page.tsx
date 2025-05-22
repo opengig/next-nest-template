@@ -1,5 +1,6 @@
 'use client';
 
+import AppSidebar from '@/components/CustomSidebar';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
@@ -33,27 +34,29 @@ const Page = () => {
 	}
 
 	return (
-		<div className='p-4'>
-			<div className='mx-auto max-w-md rounded-lg bg-card p-6 shadow'>
-				<h2 className='mb-4 text-2xl font-bold'>Authentication Status</h2>
+		<AppSidebar pages={[]}>
+			<div className='p-4'>
+				<div className='bg-card mx-auto max-w-md rounded-lg p-6 shadow-sm'>
+					<h2 className='mb-4 text-2xl font-bold'>Authentication Status</h2>
 
-				<div className='space-y-4'>
-					<div>
-						{session?.user && (
-							<pre className='mt-2 space-y-2 overflow-x-auto whitespace-break-spaces rounded-md bg-muted p-4'>
-								{JSON.stringify(session.user, null, 2)}
-							</pre>
-						)}
-					</div>
+					<div className='space-y-4'>
+						<div>
+							{session?.user && (
+								<pre className='bg-muted mt-2 space-y-2 overflow-x-auto rounded-md p-4 whitespace-break-spaces'>
+									{JSON.stringify(session.user, null, 2)}
+								</pre>
+							)}
+						</div>
 
-					<div>
-						<Button onClick={handleSignOut} variant='destructive'>
-							Sign Out
-						</Button>
+						<div>
+							<Button onClick={handleSignOut} variant='destructive'>
+								Sign Out
+							</Button>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</AppSidebar>
 	);
 };
 

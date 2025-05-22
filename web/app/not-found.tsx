@@ -7,11 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 const NotFoundPage = () => {
 	return (
-		<div className='flex min-h-screen items-center justify-center bg-background p-4'>
+		<div className='bg-background flex min-h-screen items-center justify-center p-4'>
 			<Card className='w-full max-w-md text-center'>
 				<CardHeader>
 					<CardTitle className='flex items-center justify-center text-3xl'>
-						<Frown className='mr-3 h-12 w-12 text-primary' />
+						<Frown className='text-primary mr-3 h-12 w-12' />
 						404 - Page Not Found
 					</CardTitle>
 					<CardDescription className='text-base'>
@@ -19,7 +19,7 @@ const NotFoundPage = () => {
 					</CardDescription>
 				</CardHeader>
 				<CardContent className='space-y-6'>
-					<div className='rounded-lg border border-dashed border-primary/20 bg-muted/10 p-6'>
+					<div className='border-primary/20 bg-muted/10 rounded-lg border border-dashed p-6'>
 						<p className='text-muted-foreground'>
 							The requested URL might have been removed, renamed, or temporarily unavailable.
 						</p>
