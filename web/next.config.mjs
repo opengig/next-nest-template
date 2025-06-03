@@ -10,6 +10,12 @@ const nextConfig = {
 		],
 		dangerouslyAllowSVG: true,
 	},
+	// standalone
+	output: 'standalone',
+	productionBrowserSourceMaps: false,
+	experimental: {
+		optimizeServerReact: true,
+	},
 };
 
 export default nextConfig;

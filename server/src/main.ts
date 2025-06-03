@@ -35,7 +35,7 @@ async function bootstrap() {
 		.build();
 
 	const document = SwaggerModule.createDocument(app, swaggerConfig);
-	SwaggerModule.setup('api', app, document);
+	SwaggerModule.setup('docs', app, document);
 	// Write the Swagger spec to a file
 	writeFileSync('./swagger-spec.json', JSON.stringify(document));
 

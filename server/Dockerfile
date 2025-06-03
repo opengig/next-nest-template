@@ -1,25 +1,43 @@
-# Use the official Node.js LTS (Long Term Support) image as the base image
-FROM node:20
+# Build stage
+FROM node:20-alpine AS builder
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Install pnpm in the container
-RUN npm install -g pnpm
+# Set working directory
+WORKDIR /app
 
-# Copy the package.json and pnpm-lock.yaml files to the container
+# Copy package files
 COPY package.json pnpm-lock.yaml ./
 
-# Install project dependencies using pnpm
-RUN pnpm install
+# Install dependencies
+RUN pnpm install --frozen-lockfile
 
-# Copy the entire project directory to the container
+# Copy source code
 COPY . .
 
-RUN pnpm prisma generate
+# Generate Prisma client and build
+RUN pnpm prisma generate && pnpm build
 
-# Build the Application
-RUN pnpm build
+# Production stage
+FROM node:20-alpine
 
-# Set the command to start the application
+# Set working directory
+WORKDIR /app
+
+# Copy package files and install production dependencies
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable && corepack prepare pnpm@latest --activate && \
+    pnpm install --prod --frozen-lockfile
+
+# Copy Prisma schema and generated client
+COPY --from=builder /app/prisma ./prisma
+
+# Copy built application
+COPY --from=builder /app/dist ./dist
+
+# Expose port
+EXPOSE 3001
+
+# Start the application
 CMD ["pnpm", "start:prod"]

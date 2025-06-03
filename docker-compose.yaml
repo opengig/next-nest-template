@@ -1,3 +1,5 @@
+# @format
+
 services:
   web:
     build:
@@ -10,6 +12,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
+      - HOSTNAME=0.0.0.0
     restart: on-failure:5
     networks:
       - app_network
