@@ -31,4 +31,9 @@ export const config = {
 			baseUrl: process.env.GEMINI_BASE_URL!,
 		},
 	},
+	loki: {
+		host: process.env.LOKI_HOST!,
+		username: process.env.LOKI_USERNAME!,
+		password: process.env.LOKI_PASSWORD!,
+	},
 };

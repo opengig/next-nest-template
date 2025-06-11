@@ -6,12 +6,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { writeFileSync } from 'fs';
 import { config } from './common/config';
 import { GlobalExceptionFilter } from './common/filters/global-exception-handler';
+import { json, urlencoded } from 'express';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	app.enableCors({
 		origin: '*',
 	});
+	app.use(json({ limit: '50mb' }));
+	app.use(urlencoded({ limit: '50mb', extended: true }));
 	app.useLogger(app.get(Logger));
 	app.useGlobalPipes(
 		new ValidationPipe({
