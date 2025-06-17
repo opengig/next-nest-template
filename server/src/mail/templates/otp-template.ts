@@ -18,6 +18,6 @@ export const otpTemplate = `
 </table>
 `;
 export type OtpTemplateContext = {
-	otp: string;
-	validity: number;
+  otp: string;
+  validity: number;
 };

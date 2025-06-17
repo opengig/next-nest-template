@@ -8,7 +8,6 @@
   "bracketSpacing": true,
   "requirePragma": false,
   "bracketSameLine": false,
-  "useTabs": true,
   "arrowParens": "always",
   "endOfLine": "lf",
   "proseWrap": "always"
