@@ -2,7 +2,6 @@ import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { Auth, google } from 'googleapis';
-import { UserRole } from 'prisma/client';
 import { config } from 'src/common/config';
 import { generateOtp } from 'src/common/utils/auth.utils';
 import { MailService } from 'src/mail/mail.service';
@@ -39,19 +38,17 @@ export class AuthService {
       if (!email) {
         throw new UnauthorizedException('Invalid google id token');
       }
-      let user = await this.prismaService.users.findFirst({
+      let user = await this.prismaService.user.findFirst({
         where: {
           email,
         },
       });
       if (!user) {
-        user = await this.prismaService.users.create({
+        user = await this.prismaService.user.create({
           data: {
             email,
             name: `${given_name} ${family_name}`,
             avatarUrl: picture,
-            role: UserRole.USER,
-            isVerified: true, // As it is google auth
           },
         });
       }
@@ -85,38 +82,26 @@ export class AuthService {
 
   async handleOtpAuth(email: string) {
     try {
-      let user = await this.prismaService.users.findFirst({
-        where: {
-          email,
-        },
+      const otp = await this.prismaService.otp.findFirst({
+        where: { email },
       });
-      if (!user) {
-        user = await this.prismaService.users.create({
-          data: {
-            email,
-            role: UserRole.USER,
-            isVerified: false,
-          },
-        });
+      if (otp) {
+        if (otp.expiresAt && otp.expiresAt > new Date()) {
+          void this.mailService.sendTemplateMail({
+            to: email,
+            subject: 'Your OTP for Heizen',
+            templateName: 'OTP',
+            context: {
+              otp: otp.otp,
+              validity: 5,
+            },
+          });
+          return true;
+        }
+        await this.prismaService.otp.delete({ where: { id: otp.id } });
       }
 
-      if (user.otp && user.otpExpires && user.otpExpires > new Date()) {
-        await this.prismaService.users.update({
-          where: { id: user.id },
-          data: { otpExpires: new Date(Date.now() + 1000 * 60 * 5) },
-        });
-        void this.mailService.sendTemplateMail({
-          to: email,
-          subject: 'Your OTP for Opengig',
-          templateName: 'OTP',
-          context: {
-            otp: user.otp,
-            validity: 5,
-          },
-        });
-        return true;
-      }
-      await this.generateAndSendOtp(user.id, email);
+      await this.generateAndSendOtp(email);
       return true;
     } catch (error) {
       this.logger.error(`[ERROR: handleOtpAuth] ${email}, ${error.message}`);
@@ -125,22 +110,27 @@ export class AuthService {
   }
 
   async verifyOtp(email: string, otp: string) {
-    const user = await this.prismaService.users.findFirst({
+    const otpRecord = await this.prismaService.otp.findFirst({
+      where: { email },
+    });
+    if (!otpRecord) {
+      throw new UnauthorizedException('Invalid otp');
+    }
+    if (otpRecord.expiresAt && otpRecord.expiresAt < new Date()) {
+      throw new UnauthorizedException('OTP expired');
+    }
+    if (otpRecord.otp !== otp) {
+      throw new UnauthorizedException('Invalid otp');
+    }
+    await this.prismaService.otp.delete({ where: { id: otpRecord.id } });
+    let user = await this.prismaService.user.findFirst({
       where: { email },
     });
     if (!user) {
-      throw new UnauthorizedException('Invalid otp');
+      user = await this.prismaService.user.create({
+        data: { email },
+      });
     }
-    if (user.otp !== otp) {
-      throw new UnauthorizedException('Invalid otp');
-    }
-    if (user.otpExpires && user.otpExpires < new Date()) {
-      throw new UnauthorizedException('OTP expired');
-    }
-    await this.prismaService.users.update({
-      where: { id: user.id },
-      data: { isVerified: true, otp: null, otpExpires: null },
-    });
     const jwtPayload = {
       id: user.id,
       email,
@@ -163,15 +153,18 @@ export class AuthService {
       },
     };
   }
-  private async generateAndSendOtp(userId: string, email: string) {
+  private async generateAndSendOtp(email: string) {
     const otp = generateOtp();
-    await this.prismaService.users.update({
-      where: { id: userId },
-      data: { otp, otpExpires: new Date(Date.now() + 1000 * 60 * 5) },
+    await this.prismaService.otp.create({
+      data: {
+        email,
+        otp,
+        expiresAt: new Date(Date.now() + 1000 * 60 * 5),
+      },
     });
     void this.mailService.sendTemplateMail({
       to: email,
-      subject: 'Your OTP for Opengig',
+      subject: 'Your OTP for Heizen',
       templateName: 'OTP',
       context: {
         otp: otp,
