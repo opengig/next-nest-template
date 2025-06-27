@@ -3,7 +3,6 @@ import { AppModule } from './app.module';
 import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { writeFileSync } from 'fs';
 import { config } from './common/config';
 import { GlobalExceptionFilter } from './common/filters/global-exception-handler';
 import { json, urlencoded } from 'express';
@@ -39,8 +38,6 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('docs', app, document);
-  // Write the Swagger spec to a file
-  writeFileSync('./swagger-spec.json', JSON.stringify(document));
 
   app.useGlobalFilters(new GlobalExceptionFilter());
 
