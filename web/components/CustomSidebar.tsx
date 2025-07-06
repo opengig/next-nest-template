@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import { LogOut, LucideProps } from 'lucide-react';
 import {
