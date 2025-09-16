@@ -30,7 +30,7 @@ const HomeInputBox: React.FC<HomeInputBoxProps> = ({
 }) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { files, setFiles, removeFile, isUploading, clearTransition } = useChatTransitionStore();
+  const { files, setFiles, isUploading, clearTransition } = useChatTransitionStore();
   const [isDragging, setIsDragging] = useState(false);
 
   const handleInput = (): void => {
