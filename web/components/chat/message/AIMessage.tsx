@@ -3,7 +3,6 @@ import { UIMessage } from '@ai-sdk/react';
 import React, { useState } from 'react';
 import CustomMarkdown from '../CustomMarkdown';
 import { format } from 'date-fns';
-import { toolComponents } from '../tools';
 import { Check, Loader2 } from 'lucide-react';
 import { Copy } from 'lucide-react';
 import ShinyText from '@/components/ShinyText';
@@ -66,7 +65,6 @@ const AIMessage = ({ message }: AIMessageProps) => {
             }
 
             if (type === 'tool-web_search') {
-              const ToolComponent = toolComponents['tool-web_search'];
               const callId = partAny.toolCallId || index;
 
               switch (partAny.state) {
@@ -77,9 +75,6 @@ const AIMessage = ({ message }: AIMessageProps) => {
                       <ShinyText text='Preparing search...' />
                     </div>
                   );
-
-                case 'input-available':
-                  return <ToolComponent key={callId} tool={partAny} />;
 
                 case 'output-available':
                   if (partAny.output?.data) {
@@ -93,7 +88,7 @@ const AIMessage = ({ message }: AIMessageProps) => {
                   return null;
 
                 default:
-                  return <ToolComponent key={callId} tool={partAny} />;
+                  return null;
               }
             }
 
