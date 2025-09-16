@@ -75,7 +75,7 @@ const ChatPage = ({ chat }: ChatPageProps) => {
     };
 
     sendInitialMessage();
-  }, [chat.id, chatId, query, files, clearTransition, sendMessage]);
+  }, [chat.id, chatId, query, files, clearTransition, sendMessage, input]);
 
   if (messages.length === 0) {
     return (
