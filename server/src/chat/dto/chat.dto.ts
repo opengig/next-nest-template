@@ -30,7 +30,7 @@ interface ChatMessage {
     contentType: string;
     name: string;
   }[];
-  parts?: string[];
+  parts?: Record<string, unknown>;
   createdAt?: Date;
 }
 

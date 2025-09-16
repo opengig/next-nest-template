@@ -32,7 +32,6 @@ export class ChatController {
     @Body() body: MessageDto,
     @Res() res: Response,
   ) {
-    console.log('Creating message for user:', user);
     return this.chatService.createMessage(user, id, body, res);
   }
 
@@ -43,7 +42,6 @@ export class ChatController {
 
   @Post('new')
   async createChat(@CurrentUser() user: RequestUser) {
-    console.log('Creating chat for user:', user);
     return this.chatService.createChat(user.id);
   }
 

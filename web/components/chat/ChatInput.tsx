@@ -5,8 +5,6 @@ import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import { AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
-import AttachmentInputView from './AttachmentInputView';
-import ModelSelector from './ModelSelector';
 import { useChatTransitionStore } from '@/store/chatTransition';
 import { UIMessage, UseChatHelpers } from '@ai-sdk/react';
 
@@ -149,7 +147,6 @@ const HomeInputBox: React.FC<HomeInputBoxProps> = ({
       onDrop={handleDrop}
       className='mx-auto flex w-full max-w-3xl flex-col gap-2'
     >
-      <AttachmentInputView files={files} removeFile={removeFile} />
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -195,7 +192,6 @@ const HomeInputBox: React.FC<HomeInputBoxProps> = ({
             )}
           />
           <div className='flex items-center justify-between gap-2 p-2 pt-0'>
-            <ModelSelector className='w-fit' />
             <div className='flex items-center gap-2'>
               <Button
                 type='button'

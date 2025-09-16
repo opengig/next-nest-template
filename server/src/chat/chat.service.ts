@@ -4,7 +4,7 @@ import { FileAttachment, GetChatsQueryDto, MessageDto, UpdateChatDto } from './d
 import { generateObject, smoothStream, streamText, createUIMessageStream, pipeUIMessageStreamToResponse } from 'ai';
 import { Response } from 'express';
 import { openai } from '@ai-sdk/openai';
-import { InputJsonValue } from 'prisma/client/runtime/library';
+import { Prisma } from 'prisma/client';
 import { dbToAiMessage } from './dto/dto-to-aiMessage';
 import { z } from 'zod';
 import { S3Service } from 'src/common/s3.service';
@@ -29,8 +29,8 @@ export class ChatService {
         chatId,
         content: message.content,
         role: message.role,
-        parts: (message.parts || {}) as unknown as InputJsonValue,
-        attachments: (message.experimental_attachments || null) as unknown as InputJsonValue,
+        parts: (message.parts || {}) as Prisma.InputJsonValue,
+        attachments: (message.experimental_attachments || null) as Prisma.InputJsonValue,
       },
     });
 
@@ -179,23 +179,21 @@ export class ChatService {
   }
 
   async deleteChat(userId: string, chatId: string) {
-    await this.prisma.message.deleteMany({
-      where: { chatId },
-    });
-
-    const result = await this.prisma.chat.deleteMany({
+    const chat = await this.prisma.chat.findFirst({
       where: { id: chatId, userId },
     });
-    if (result.count === 0) {
+    if (!chat) {
       throw new NotFoundException('Chat not found');
     }
+    await this.prisma.message.deleteMany({ where: { chatId } });
+    await this.prisma.chat.delete({ where: { id: chatId } });
     return { id: chatId } as const;
   }
 
   async uploadFiles(userId: string, files: Express.Multer.File[]): Promise<FileAttachment[]> {
     const uploadedFiles = await Promise.all(
       files.map(async (file) => {
-        const { url } = await this.s3Service.uploadFile(file, `cirro/${userId}/${file.originalname}`);
+        const { url } = await this.s3Service.uploadFile(file, `template/${userId}/${file.originalname}`);
         return {
           url,
           contentType: file.mimetype,
