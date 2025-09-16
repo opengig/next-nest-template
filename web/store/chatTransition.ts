@@ -17,7 +17,7 @@ interface ChatTransitionState {
 
 export const useChatTransitionStore = create<ChatTransitionState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       query: '',
       files: [],
       chatId: null,

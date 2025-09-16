@@ -7,7 +7,7 @@ interface ChatMessage {
     contentType: string;
     name: string;
   }[];
-  parts?: Record<string, any>;
+  parts?: Record<string, string>;
   createdAt?: Date;
 }
 
@@ -16,7 +16,8 @@ export interface MessageDto {
     id?: string;
     role: 'user' | 'assistant' | 'system' | 'tool';
     content: string;
-    parts?: Record<string, any>;
+
+    parts?: Record<string, string>;
     experimental_attachments?: {
       url: string;
       contentType: string;

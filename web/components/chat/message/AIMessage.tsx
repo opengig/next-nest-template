@@ -35,6 +35,7 @@ const AIMessage = ({ message }: AIMessageProps) => {
       <div className={cn('flex flex-1 flex-col gap-1', 'items-start')}>
         <div className={'w-full'}>
           {message.parts?.map((part, index) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const partAny = part as any;
             const { type } = partAny;
 

@@ -1,5 +1,5 @@
 import { ChatMessage } from './ChatMessage';
-import { UIMessage, UseChatHelpers } from '@ai-sdk/react';
+import { UIMessage } from '@ai-sdk/react';
 import MessageLoading from './MessageLoading';
 import ErrorMessage from './ErrorMessage';
 import { useRef, useEffect, useState, useCallback } from 'react';
