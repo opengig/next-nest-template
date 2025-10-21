@@ -1,0 +1,661 @@
+---
+alwaysApply: true
+---
+
+# Project Cursor Rules
+
+## 🏗️ Tech Stack & Architecture
+
+- **Frontend**: Next.js 14 with App Router, TypeScript, shadcn/ui components
+- **Backend**: NestJS with Prisma ORM, JWT-based authentication
+- **Database**: PostgreSQL with Prisma ORM
+- **Email Service**: Built-in email service with templates
+- **Authentication**: JWT + Google OAuth + OTP-based auth
+- **State Management**: Zustand with persistence
+- **Validation**: Zod (frontend) + class-validator (backend)
+- **API Client**: Type-safe Axios-based client with interceptors
+- **Styling**: Tailwind CSS with dark/light mode support
+- **Docker**: Full containerization support
+
+## 📋 General Coding Standards
+
+### Code Quality Requirements
+- **ALWAYS** use TypeScript for all new code
+- Follow ESLint and Prettier configurations strictly
+- Write meaningful commit messages following commitlint conventions
+- Use meaningful variable and function names
+- Follow DRY (Don't Repeat Yourself) principle
+- Write modular, clean, and maintainable code
+- Add comprehensive error handling for all operations
+- Use proper logging with contextual information
+
+### Linting & Formatting
+- **Frontend (web/)**: Extends `next/core-web-vitals` and `next/typescript` via flat config
+  - Enforced by ESLint; Prettier is implied by Next.js defaults
+  - 2-space indentation, single quotes, semicolons, trailing commas per Prettier defaults
+- **Backend (server/)**: `typescript-eslint` recommendedTypeChecked + `eslint-plugin-prettier/recommended`
+  - Rules of note:
+    - `@typescript-eslint/no-explicit-any`: error
+    - `@typescript-eslint/no-floating-promises`: warn
+    - `@typescript-eslint/no-unused-vars`: warn
+  - Prettier drives formatting. Do not hand-format; let the formatter run.
+- Keep files free of lint errors; fix warnings where straightforward.
+
+### Commit Message Conventions
+- Conventional Commits enforced by commitlint
+  - Allowed types: `build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test|config`
+  - Type/scope/subject must be lower-case; subject must not end with a period
+  - Header max length: 100 chars; body min length: 10; wrap body/footer at 100
+  - Examples:
+    - `feat(auth): add OTP verification flow`
+    - `fix(server): handle prisma null relation in user service`
+
+### File Organization
+- Place files in their appropriate directories according to project structure
+- Keep related functionality grouped together
+- Use barrel exports (index.ts) for clean imports
+- Follow consistent naming conventions:
+  - Components: PascalCase (e.g., `UserProfile.tsx`)
+  - Files: kebab-case (e.g., `user-service.ts`)
+  - Directories: kebab-case (e.g., `user-management/`)
+
+### Code Style & Naming Conventions
+- Variables, functions, methods: `camelCase`
+- Classes, React components, interfaces, types, enums: `PascalCase`
+- Constants:
+  - Use `UPPER_SNAKE_CASE` for global, immutable constants (e.g., prompt literals like `SERVICENOW_AGENT_PROMPT`)
+  - Use `camelCase` keys inside configuration objects (e.g., `envConfig.appUrl`)
+- DTOs/DTO fields: `PascalCase` for class names, `camelCase` for properties
+- File names: `kebab-case` (components may be `PascalCase.tsx` when colocated under `components/`)
+- Directory names: `kebab-case`
+- Booleans: prefix with `is`, `has`, `can`, `should` (e.g., `isActive`, `hasNextPage`)
+- Prefer `const` over `let`. Avoid `var` entirely.
+- Prefer early returns over nested conditionals; minimize control-flow depth.
+- Avoid `any`; use precise types or generics. On backend, `any` is disallowed by ESLint.
+- Public APIs (exported functions/classes) should have explicit return types.
+- Imports:
+  - Frontend uses path alias `@/*`
+  - Backend uses `src/*` with baseUrl `./`; prefer absolute from `src/` over long relatives
+  - Group imports: std libs → external → internal; keep side-effect imports separate
+
+### Comments & Documentation
+- Keep comments concise; avoid restating obvious code
+- Document non-obvious rationale, invariants, edge cases, and security/performance caveats
+- Use JSDoc for complex functions and public APIs as needed
+
+## 🎯 Frontend Standards (Next.js 14 + React)
+
+### Component Architecture
+```typescript
+// ✅ GOOD: Functional component with proper typing
+interface UserProfileProps {
+  user: User;
+  onUpdate?: (user: User) => void;
+}
+
+const UserProfile: React.FC<UserProfileProps> = ({ user, onUpdate }) => {
+  // Component logic here
+  return (
+    <div className="user-profile">
+      {/* JSX here */}
+    </div>
+  );
+};
+
+export default UserProfile;
+```
+
+### Component Standards
+- **ALWAYS** use functional components with hooks
+- Follow atomic design principles (atoms, molecules, organisms)
+- Place reusable components in `components/` directory
+- Use shadcn/ui components for consistent UI design
+- Implement proper prop typing with TypeScript interfaces
+- Use `React.FC` or explicit return types for components
+- Handle loading and error states appropriately
+
+### State Management Rules
+- Use React hooks (useState, useEffect, etc.) for local component state
+- Implement global state in `store/` directory using Zustand
+- Keep state logic separate from UI components
+- Use Zustand with persistence for data that should survive page refreshes
+- Follow this store pattern:
+
+```typescript
+// ✅ GOOD: Zustand store pattern
+interface MyStoreState {
+  data: MyData[];
+  isLoading: boolean;
+  
+  // Actions
+  setData: (data: MyData[]) => void;
+  fetchData: () => Promise<void>;
+  clearData: () => void;
+}
+
+export const useMyStore = create<MyStoreState>()(
+  persist(
+    (set, get) => ({
+      data: [],
+      isLoading: false,
+      
+      setData: (data) => set({ data }),
+      fetchData: async () => {
+        set({ isLoading: true });
+        try {
+          // API call logic
+          const result = await MyService.getData();
+          if (result.data) {
+            set({ data: result.data, isLoading: false });
+          }
+        } catch (error) {
+          set({ isLoading: false });
+          // Handle error
+        }
+      },
+      clearData: () => set({ data: [] }),
+    }),
+    {
+      name: 'my-store-storage',
+      skipHydration: typeof window === 'undefined',
+    }
+  )
+);
+```
+
+### API Integration Standards
+- **NEVER** call API endpoints directly from components
+- **ALWAYS** create service methods in `services/` directory
+- Use the ApiClient class for all HTTP requests
+- Implement proper loading states and error handling
+- Follow this service pattern:
+
+```typescript
+// ✅ GOOD: Service pattern
+import { ApiClient } from '@/lib/api-client';
+import { User, UpdateUserDto } from '@/types';
+
+export class UserService {
+  static async getProfile() {
+    return await ApiClient.get<User>('/api/users/profile');
+  }
+
+  static async updateProfile(data: UpdateUserDto) {
+    return await ApiClient.patch<User>('/api/users/profile', data);
+  }
+
+  static async deleteUser(id: string) {
+    return await ApiClient.delete<boolean>(`/api/users/${id}`);
+  }
+}
+```
+
+#### ApiClient & Error Shape
+- All requests go through `ApiClient` which:
+  - Injects `Authorization: Bearer <token>` from NextAuth session (server and client)
+  - Switches baseURL automatically between `apiInternalUrl` (SSR) and `apiUrl` (browser)
+  - Handles `FormData` content types transparently
+- Standard response wrapper (`ApiResult<T>`):
+```typescript
+type ApiResult<T> =
+  | { data: T }
+  | { error: { message: string; status: number; details?: Record<string, unknown> } };
+```
+- On error, `message` is normalized via `parseMessage`, and backend-provided `data` is mapped to `details`.
+
+#### Services
+- Place service classes under `web/services/` and export from `web/services/index.ts`
+- Services return `ApiResult<T>` directly; components handle loading/error UI
+
+#### State Management (Zustand)
+- Stores reside in `web/store/` and follow the `create(...persist(...))` pattern
+  - Use `name` and `skipHydration: typeof window === 'undefined'`
+  - Keep actions synchronous where possible; async actions manage `isLoading*` flags
+  - Persist only the minimal state needed via `partialize`
+- Avoid React hooks inside store definitions to keep SSR safe
+
+### Form Validation & Handling
+- Use Zod schemas in `validations/` directory for all form validation
+- Implement react-hook-form for form management
+- Follow this validation pattern:
+
+```typescript
+// ✅ GOOD: Zod validation pattern
+import { z } from 'zod';
+
+export const userProfileSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Please enter a valid email address'),
+  age: z.number().min(18, 'Must be at least 18 years old').optional(),
+});
+
+export type UserProfileFormData = z.infer<typeof userProfileSchema>;
+```
+
+### App Router Standards
+- Use App Router conventions and file-based routing
+- Implement proper loading.tsx and error.tsx files
+- Keep route handlers clean and focused
+- Use Server Components where appropriate
+- Handle async operations properly in Server Components:
+
+```typescript
+// ✅ GOOD: Server Component pattern
+const UserPage = async ({ params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
+  const user = await UserService.getUser(id);
+  
+  if (!user.data) {
+    return notFound();
+  }
+  
+  return <UserProfile user={user.data} />;
+};
+```
+
+### Styling Standards
+- Use Tailwind CSS classes with proper responsive design
+- Leverage shadcn/ui components for consistent design system
+- Support both dark and light modes
+- Use CSS variables for theme-aware styling
+- Follow mobile-first responsive design principles
+- Do not change existing component look-and-feel unless explicitly requested
+
+## 🔧 Backend Standards (NestJS + Prisma)
+
+### Architecture Principles
+- Follow NestJS module architecture strictly
+- Use dependency injection throughout the application
+- Implement proper separation of concerns (Controller → Service → Repository)
+- Keep controllers thin - business logic belongs in services
+- Use Prisma for all database operations
+
+### Bootstrapping & Global Behavior
+- `main.ts` sets:
+  - CORS enabled for all origins
+  - Global ValidationPipe with `whitelist`, `transform`, implicit conversion, and custom BadRequest response
+  - Swagger at `/docs` with Bearer auth
+  - Global exception filter (`GlobalExceptionFilter`) producing `{ message, data? }`
+  - `nestjs-pino` logger wired via `LoggerModule` (pretty printing in dev)
+
+### Module Structure Pattern
+```typescript
+// ✅ GOOD: Module structure
+@Module({
+  imports: [PrismaModule, JwtModule, MailModule],
+  controllers: [AuthController],
+  providers: [AuthService, JwtStrategy],
+  exports: [AuthService], // Export what other modules might need
+})
+export class AuthModule {}
+```
+
+### Controller Standards
+- Use proper HTTP status codes and methods
+- Implement comprehensive Swagger documentation
+- Use DTOs for all request/response data
+- Implement proper error handling
+- Follow RESTful API conventions
+- Use decorators appropriately:
+
+```typescript
+// ✅ GOOD: Controller pattern
+@Controller('api/users')
+@ApiTags('Users')
+@ApiBearerAuth()
+export class UserController {
+  constructor(private readonly userService: UserService) {}
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get user by ID' })
+  @ApiResponse({ status: 200, description: 'User found', type: UserResponseDto })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async getUser(@Param('id') id: string, @CurrentUser() user: RequestUser) {
+    return this.userService.getUser(id, user);
+  }
+}
+```
+
+### Service Standards
+- Implement comprehensive business logic in services
+- Use proper error handling with meaningful error messages
+- Implement logging for debugging and monitoring
+- Use transactions for complex database operations
+- Follow this service pattern:
+
+```typescript
+// ✅ GOOD: Service pattern
+@Injectable()
+export class UserService {
+  private readonly logger = new Logger(UserService.name);
+
+  constructor(private readonly prismaService: PrismaService) {}
+
+  async getUser(id: string, currentUser: RequestUser): Promise<User> {
+    try {
+      const user = await this.prismaService.user.findUnique({
+        where: { id },
+        include: { profile: true },
+      });
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      // Authorization check
+      if (user.id !== currentUser.id && currentUser.role !== 'ADMIN') {
+        throw new ForbiddenException('Access denied');
+      }
+
+      this.logger.log(`User ${id} retrieved by ${currentUser.id}`);
+      return user;
+    } catch (error) {
+      this.logger.error(`Failed to get user ${id}:`, error);
+      throw error;
+    }
+  }
+}
+```
+
+#### Logging
+- Use `private readonly logger = new Logger(ServiceName)` in services
+- Log key actions with contextual identifiers (entity IDs, user IDs)
+- Log errors with `this.logger.error('context', error)` and rethrow; do not swallow
+
+#### Error Responses
+- Prefer Nest HTTP exceptions (`BadRequestException`, `NotFoundException`, etc.)
+- Global filter returns either the exception response or `{ message, data }` for unknown errors
+- Keep messages user-friendly; use codes/ids only when needed
+
+### DTO Standards
+- **ALWAYS** create DTOs for request/response data validation
+- **ALWAYS** add @ApiProperty decorators for Swagger documentation
+- Use class-validator decorators for validation
+- Follow this DTO pattern:
+
+```typescript
+// ✅ GOOD: DTO pattern
+export class CreateUserDto {
+  @ApiProperty({ 
+    description: 'User full name',
+    example: 'John Doe',
+    minLength: 2,
+    maxLength: 100
+  })
+  @IsString()
+  @Length(2, 100)
+  name: string;
+
+  @ApiProperty({ 
+    description: 'User email address',
+    example: 'john@example.com'
+  })
+  @IsEmail()
+  email: string;
+
+  @ApiProperty({ 
+    description: 'User age',
+    example: 25,
+    minimum: 18,
+    maximum: 120,
+    required: false
+  })
+  @IsOptional()
+  @IsNumber()
+  @Min(18)
+  @Max(120)
+  age?: number;
+}
+```
+
+### Database Standards
+- Use Prisma for all database operations
+- Write clean and optimized queries
+- Use transactions for operations affecting multiple tables
+- Implement proper indexing for performance
+- Use proper relations and foreign keys
+- Follow this database pattern:
+
+```typescript
+// ✅ GOOD: Database operation pattern
+async createUserWithProfile(userData: CreateUserDto): Promise<User> {
+  return this.prismaService.$transaction(async (prisma) => {
+    const user = await prisma.user.create({
+      data: {
+        name: userData.name,
+        email: userData.email,
+        profile: {
+          create: {
+            bio: '',
+            avatarUrl: null,
+          },
+        },
+      },
+      include: {
+        profile: true,
+      },
+    });
+
+    await prisma.userActivity.create({
+      data: {
+        userId: user.id,
+        action: 'ACCOUNT_CREATED',
+        timestamp: new Date(),
+      },
+    });
+
+    return user;
+  });
+}
+```
+
+### Authentication & Authorization
+- **ALWAYS** protect routes by default (use @Public() decorator for public endpoints)
+- Use JWT tokens with proper expiration
+- Implement role-based access control where needed
+- Use @CurrentUser() decorator to access authenticated user data
+- Follow this auth pattern:
+
+```typescript
+// ✅ GOOD: Authentication pattern
+@Controller('api/admin')
+@ApiBearerAuth()
+export class AdminController {
+  @Get('users')
+  @Roles('ADMIN') // Custom decorator for role-based access
+  async getUsers(@CurrentUser() user: RequestUser) {
+    return this.adminService.getUsers(user);
+  }
+
+  @Post('public-endpoint')
+  @Public() // Explicitly mark public endpoints
+  async publicEndpoint() {
+    return { message: 'This is public' };
+  }
+}
+```
+
+### Error Handling
+- Use appropriate HTTP exceptions (NotFoundException, BadRequestException, etc.)
+- Provide meaningful error messages
+- Log errors with context for debugging
+- Use global exception filter for consistent error responses
+
+### Path Aliases & Imports
+- Backend: prefer absolute imports from `src/...` over deep relatives
+- Frontend: prefer `@/...` alias per `tsconfig.json`
+
+## 🔒 Security Standards
+
+### Data Validation
+- **ALWAYS** validate all input data using DTOs and validation decorators
+- Sanitize user inputs to prevent injection attacks
+- Use whitelist validation in ValidationPipe
+- Implement rate limiting for sensitive endpoints
+
+### Authentication Security
+- Use strong JWT secrets stored in environment variables
+- Implement proper token expiration and refresh mechanisms
+- Hash passwords using bcrypt with appropriate salt rounds
+- Implement account lockout mechanisms for failed login attempts
+- Frontend auth via NextAuth: Google OAuth + OTP; JWT strategy with role-based middleware
+
+### Authorization
+- Implement role-based access control (RBAC)
+- Use guards and decorators for route protection
+- Validate user permissions at the service level
+- Log all authorization failures for security monitoring
+
+## 📁 Project Structure Compliance
+
+### Backend Structure (server/)
+```
+src/
+├── auth/                 # Authentication module
+│   ├── decorators/      # Custom decorators (@Public, @CurrentUser)
+│   ├── dto/            # Auth-related DTOs
+│   ├── guards/         # JWT guards
+│   └── strategies/     # Passport strategies
+├── common/             # Shared utilities
+│   ├── config.ts       # Environment configuration
+│   ├── filters/        # Global exception filters
+│   └── utils/          # Utility functions
+├── mail/               # Email service
+├── prisma/             # Prisma service
+└── [feature]/          # Feature modules (chat, user, etc.)
+    ├── dto/            # Feature DTOs
+    ├── [feature].controller.ts
+    ├── [feature].service.ts
+    └── [feature].module.ts
+```
+
+### Frontend Structure (web/)
+```
+├── app/                # Next.js App Router pages
+│   ├── (auth)/         # Auth route group
+│   ├── (dashboard)/    # Dashboard route group
+│   └── api/            # API routes
+├── components/         # React components
+│   ├── ui/             # shadcn/ui components
+│   └── [feature]/      # Feature-specific components
+├── lib/                # Core utilities (API client, auth config)
+├── services/           # API service classes
+├── store/              # Zustand stores
+├── types/              # TypeScript type definitions
+├── utils/              # Utility functions
+└── validations/        # Zod schemas
+```
+
+### Environment Configuration
+- Frontend `envConfig` (`web/config/index.ts`):
+  - `appUrl`, `apiUrl`, `apiInternalUrl`, `nextAuthSecret`, `nextAuthUrl`, provider keys
+  - Uses `NEXT_PUBLIC_...` vars for browser-exposed values
+- Backend `config` (`server/src/common/config.ts`):
+  - `port`, `jwt`, `google`, `mail.smtp`, `llm`, `openai`, `aws`
+  - All envs are `UPPER_SNAKE_CASE`; parse integers where needed
+
+## 🛠️ Development Workflow
+
+### Code Generation Guidelines
+1. **Always follow the existing patterns** in the codebase
+2. **Use the established file structure** and naming conventions
+3. **Implement proper error handling** for all operations
+4. **Add comprehensive logging** for debugging and monitoring
+5. **Write type-safe code** with proper TypeScript interfaces
+6. **Test your code** before considering it complete
+7. **Follow security best practices** for all user-facing features
+
+### When Adding New Features
+1. **Backend First**: Create the NestJS module, service, controller, and DTOs
+2. **Database Schema**: Update Prisma schema if needed
+3. **API Documentation**: Ensure Swagger documentation is complete
+4. **Frontend Service**: Create the service class in `services/`
+5. **Frontend Components**: Build the UI components
+6. **State Management**: Add Zustand store if global state is needed
+7. **Validation**: Implement Zod schemas for form validation
+8. **Error Handling**: Implement proper error states and user feedback
+9. **Logging**: Add contextual `nestjs-pino` logs in services and key flows
+10. **Auth**: Update middleware/guards and route protection as needed
+
+### File Creation Priority
+1. **ALWAYS prefer editing existing files** over creating new ones
+2. **Only create new files** when absolutely necessary for the feature
+3. **Follow the established patterns** in existing files
+4. **Use proper imports and exports** following the project structure
+
+## 🎨 UI/UX Standards
+
+### Design System
+- Use shadcn/ui components as the foundation
+- Implement consistent spacing using Tailwind CSS spacing scale
+- Support both dark and light themes
+- Use proper semantic HTML elements
+- Implement proper accessibility features (ARIA labels, keyboard navigation)
+
+### User Experience
+- Implement proper loading states for all async operations
+- Show meaningful error messages to users
+- Use optimistic updates where appropriate
+- Implement proper form validation with real-time feedback
+- Ensure responsive design works on all device sizes
+
+## 📊 Performance Standards
+
+### Frontend Performance
+- Use Next.js Image component for all images
+- Implement proper code splitting and lazy loading
+- Minimize bundle size by importing only what's needed
+- Use React.memo for expensive components
+- Implement proper caching strategies
+  - Prefer server components where possible; avoid large client-only libraries
+
+### Backend Performance
+- Use database indexes for frequently queried fields
+- Implement pagination for large data sets
+- Use database transactions for consistency
+- Cache frequently accessed data
+- Monitor and log slow queries
+
+## 🧪 Testing Requirements
+
+### Frontend Testing
+- Write unit tests for utility functions
+- Test component behavior with user interactions
+- Mock API calls in component tests
+- Test form validation logic
+
+### Backend Testing
+- Write unit tests for service methods
+- Test controller endpoints with proper mocking
+- Test database operations with test database
+- Implement integration tests for critical flows
+
+## 🧩 Examples from Codebase (Conventions in Practice)
+
+```startLine:endLine:web/lib/api-client.ts
+// ApiClient with typed ApiResult, token injection, and error normalization
+```
+
+```startLine:endLine:server/src/main.ts
+// Global ValidationPipe, Swagger, CORS, logger, and exception filter setup
+```
+
+```startLine:endLine:server/src/auth/dto/auth.dto.ts
+// DTOs with class-validator and @ApiProperty decorators
+```
+
+## 📝 Documentation Standards
+
+### Code Documentation
+- Add JSDoc comments for complex functions
+- Document API endpoints with Swagger
+- Keep README files updated
+- Document environment variables and configuration
+
+### API Documentation
+- Use Swagger/OpenAPI for all endpoints
+- Provide examples for request/response bodies
+- Document error responses and status codes
+- Include authentication requirements
+
+Remember: These rules ensure consistency, maintainability, and high code quality across the entire Envizo project. Always refer to existing code patterns when implementing new features.
