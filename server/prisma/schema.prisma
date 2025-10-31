@@ -18,6 +18,8 @@ model User {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
 
+  chats Chat[]
+
   @@map("users")
 }
 
@@ -30,6 +32,38 @@ model Otp {
   updatedAt DateTime @default(now()) @map("updated_at")
 
   @@map("otps")
+}
+
+model Chat {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  title     String   @default("New Chat")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id])
+  messages Message[]
+
+  @@index([userId, createdAt])
+  @@map("chats")
+}
+
+model Message {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  chatId      String   @db.ObjectId
+  content     String
+  reasoning   String?
+  role        String
+  parts       Json
+  attachments Json?
+  annotations Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  chat Chat @relation(fields: [chatId], references: [id])
+
+  @@index([chatId, createdAt])
+  @@map("messages")
 }
 
 enum UserRole {

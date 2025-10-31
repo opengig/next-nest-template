@@ -67,6 +67,18 @@ function SidebarComponent({ children, pages }: { children: React.ReactNode; page
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => {
+                    setOpenMobile(false);
+                  }}
+                  className='cursor-pointer'
+                >
+                  <Link href='/chat' className='gap-3'>
+                    <span>Home</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarGroup>
           </SidebarMenu>
         </SidebarContent>
